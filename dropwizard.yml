@@ -1,0 +1,5 @@
+message: "Bonjour"
+server:
+  applicationConnectors:
+    - type: http
+      port: 5000

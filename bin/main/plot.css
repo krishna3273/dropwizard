@@ -1,0 +1,23 @@
+/*#line .chart-symbol {*/
+/*    -fx-background-radius: 0;*/
+/*    -fx-padding: 1px ;*/
+/*}*/
+
+.default-color5.chart-symbol {
+    -fx-background-color: #860061, white;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+}
+
+.chart-series-line {
+    -fx-stroke-width: 2px;
+    -fx-effect: null;
+    -fx-stroke: red;
+}
+.chart-plot-background{
+    -fx-background-color: white;
+}
+.chart{
+    -fx-start-margin: 100px;
+}

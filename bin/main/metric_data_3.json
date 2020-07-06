@@ -1,0 +1,56 @@
+{
+    "granularitySeconds": 3600,
+    "headersList": [
+        "id",
+        "ART.sum",
+        "ART.current",
+        "ART.count",
+        "ART.group_count",
+        "ART.weight_value",
+        "ART.weight_value_square",
+        "CPM.sum",
+        "CPM.current",
+        "CPM.count",
+        "CPM.group_count",
+        "CPM.weight_value",
+        "CPM.weight_value_square"
+    ],
+    "timeStampedDimensionsAndMetricsList": [
+        {
+            "timeStampInUtc": "2020-04-26T02:00:00.000Z",
+            "dimensionsAndMetricsValues": [
+                "EntityId1",
+                "90",
+                "5",
+                "20",
+                "100",
+                "100",
+                "1000",
+                "110",
+                "5",
+                "20",
+                "100",
+                "110",
+                "1400"
+            ]
+        },
+        {
+            "timeStampInUtc": "2020-04-25T02:00:00.000Z",
+            "dimensionsAndMetricsValues": [
+                "EntityId1",
+                "120",
+                "6",
+                "20",
+                "100",
+                "120",
+                "1200",
+                "120",
+                "6",
+                "20",
+                "100",
+                "120",
+                "1200"
+            ]
+        }
+    ]
+}

@@ -67,7 +67,7 @@ let plot=(series,labels,entity,metric_name,plot_num)=>{
     $(`#plot-${plot_num}`).highcharts(properties);
 }
 
-let main=async()=>{
+let main=()=>{
 
     const node = document.getElementById("text");
     node.addEventListener("keyup", function(event) {
@@ -78,16 +78,31 @@ let main=async()=>{
 
     $("#button").on('click',async()=>{
         $("body div").remove();
-        res=await httpGet("http://localhost:5000/plot/"+$("#text").val()+".json")
-        console.log(res)
-        values=res["values"]
-        labels=res["labels"]
-        titles=res["titles"]
-        sub=res["sub_titles"]
-        for(let i=0;i<titles.length;i++){
-            let series=[]
-            series[0]={name:`${titles[i]}-${sub[i]}`,data:values[i]}
-            plot(series,labels[i],titles[i],sub[i],i);
+        let res=await httpGet("http://localhost:5000/plot/"+$("#text").val()+".json")
+        // console.log(res)
+        // console.log("krishna")
+        plot_num=0
+        for(const key in res){
+            // console.log(key,res[key])
+            for (const innerkey in res[key]){
+                let currList=res[key][innerkey]["metricData"];
+                let series=[]
+                let labels=[]
+                let values=[]
+                // console.log(typeof (currList))
+                for(let i=0;i<currList.length;i++){
+                    let datavalues=currList[i];
+                    for(const timestamp in datavalues){
+                        labels[i]=timestamp;
+                        // console.log(`timestamp=${timestamp}`)
+                        values[i]=datavalues[timestamp].value;
+                        // console.log(`value=${values[i]}`)
+                    }
+                }
+                series[0]={"name":key+innerkey,"data":values}
+                plot(series,labels,key,innerkey,plot_num)
+                plot_num++
+            }
         }
     })
 }

@@ -9,9 +9,4 @@ public class ServerModule implements  Module{
     public void configure(Binder binder) {
     }
 
-    @Provides
-    @Named("message")
-    public String provideMessage(ServerConfiguration serverConfiguration) {
-        return serverConfiguration.getMessage();
-    }
 }

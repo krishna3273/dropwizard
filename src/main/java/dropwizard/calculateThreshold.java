@@ -1,6 +1,5 @@
 package dropwizard;
 
-import com.google.inject.internal.cglib.core.internal.$Function;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -9,34 +8,38 @@ import java.util.List;
 import java.util.Map;
 import java.lang.Math;
 
-public class Outlier {
+public class calculateThreshold {
     Map<String, Map<String,MetricData>> data;
-    Map<Integer,List<Integer>> Buckets;
-    Map<Integer, Pair<Double,Double>> Threshold;
-    public Outlier(Map<String, Map<String, MetricData>> data) {
+    Map<String,Map<String,Map<Integer, Pair<Double,Double>>>> Threshold;
+    String ses;
+    public calculateThreshold(Map<String, Map<String, MetricData>> data,String seasonality){
         this.data = data;
-        this.Buckets=new HashMap<Integer, List<Integer>>();
-        this.Threshold=new HashMap<Integer,Pair<Double, Double>>();
+        this.ses=seasonality;
+        this.Threshold=new HashMap<String, Map<String, Map<Integer, Pair<Double, Double>>>>();
     }
 
-    public Map<String, Map<String,MetricData>> daily(){
-        return data;
+    public Map<String, Map<String, Map<Integer, Pair<Double, Double>>>> getThreshold() {
+        return Threshold;
     }
 
-    public Map<String, Map<String,MetricData>> weekly(){
-        for (Map<String, MetricData> value : data.values()) {
-            for (MetricData metricData : value.values()) {
+
+    public void calculate(){
+        for (String entity : data.keySet()) {
+            Map<String,MetricData> value=data.get(entity);
+            for (String metricName : value.keySet()) {
+                MetricData metricData=value.get(metricName);
                 List<Map<String,MetricValues>> metricDataList=metricData.metricData;
+                Map<Integer,List<Integer>> Buckets=new HashMap<Integer, List<Integer>>();
                 for (Map<String, MetricValues> metricValuesMap : metricDataList) {
                     metricValuesMap.forEach((k,v) ->{
-                        int [] parsedTime=Helper.parseTimeStamp(k);
-                        int hashKey=parsedTime[3]*24+parsedTime[4];
-//                        int hashKey=parsedTime[4];
+                        int hashKey=Helper.hash(k,this.ses);
                         Buckets.computeIfAbsent(hashKey, k1 -> new ArrayList<Integer>());
                         List<Integer> temp=Buckets.get(hashKey);
                         temp.add(v.getValue());
                     });
                 }
+                System.out.println(Buckets);
+                Map<Integer, Pair<Double,Double>> currThreshold=new HashMap<Integer,Pair<Double, Double>>();
                 for (Integer key : Buckets.keySet()) {
                     int multiplier=8;
                     List<Integer> l=Buckets.get(key);
@@ -46,22 +49,18 @@ public class Outlier {
                     mean = Math.round((l.stream().mapToDouble(v -> v).sum())/l.size()*100)/100.0;
                     variance=(l.stream().mapToDouble(v -> (v-mean)*(v-mean)).sum())/l.size();
                     sd=Math.round(Math.sqrt(variance)*100)/100.0;
-                    Threshold.put(key,new Pair<Double, Double>(mean,sd));
+                    currThreshold.put(key,new Pair<Double, Double>(mean,sd));
                 }
+                System.out.println(currThreshold);
+                Threshold.put(entity, new HashMap<String, Map<Integer, Pair<Double, Double>>>());
+                Threshold.get(entity).put(metricName,currThreshold);
             }
         }
-
-        System.out.println(Buckets);
-        System.out.println(Threshold);
-        return data;
     }
 
-    public Map<String, Map<String,MetricData>> monthly(){
-        return data;
-    }
 
-    public static void main(String[] args) {
-        Outlier o=new Outlier(ReadJson.read("metric_data_1.json"));
-        o.weekly();
-    }
+//    public static void main(String[] args) {
+//        calculateThreshold o=new calculateThreshold(ReadJson.read("metric_data_1.json"),"week");
+//        o.calculate();
+//    }
 }

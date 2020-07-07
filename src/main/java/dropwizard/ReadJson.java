@@ -51,6 +51,7 @@ public class ReadJson {
                     Map<String,MetricValues> newMap=new HashMap<String, MetricValues>();
                     newMap.put(currTimeStamp,metricValues);
                     metricData.metricData.add(newMap);
+
                 }
             }
             return datamap;
